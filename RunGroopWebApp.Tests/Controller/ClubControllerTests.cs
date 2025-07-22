@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RunGroopWebApp.Controllers;
+using RunGroopWebApp.Helpers;
 using RunGroopWebApp.Interfaces;
 using RunGroopWebApp.Models;
 using RunGroopWebApp.ViewModels;
@@ -67,5 +68,58 @@ namespace RunGroopWebApp.Tests.Controller
             //Assert
             result.Should().BeOfType<NotFoundResult>();
         }
+
+        [Fact]
+        public async Task ClubController_ListClubByState_ReturnExpectedViewWithNoClubWarning()
+        {
+            //Arrange
+            var state = "TEXAS";
+            var stateEnum = StateConverter.GetStateByName(state).ToString();
+            var clubs = new List<Club>
+            {
+                new Club {Id=1,Title="Club A"},
+                new Club {Id=2,Title="Club B"}
+            };
+            _clubRepository.Setup(r => r.GetClubsByState(stateEnum)).ReturnsAsync(clubs);
+
+            //Act
+            var result = await _clubController.ListClubsByState(state);
+
+            //Assert
+            result.Should().BeOfType<ViewResult>();
+            var viewResult = result as ViewResult;
+            viewResult!.Model.Should().BeOfType<ListClubByStateViewModel>();
+            var model = viewResult.Model as ListClubByStateViewModel;
+
+            model!.Clubs.Should().HaveCount(2);
+            model.State.Should().Be(state);
+            model.NoClubWarning.Should().BeFalse();
+
+        }
+
+        [Fact]
+        public async Task ClubController_ListClubByState_Returns_NoClubWarning()
+        {
+            //Arrange
+            var state = "TEXAS";
+            var stateEnum = StateConverter.GetStateByName(state).ToString();
+            var emptyClubs = new List<Club>();
+            _clubRepository.Setup(r => r.GetClubsByState(stateEnum)).ReturnsAsync(emptyClubs);
+
+            //Act
+            var result = await _clubController.ListClubsByState(state);
+
+            //Assert
+            result.Should().BeOfType<ViewResult>();
+            var viewResult = result as ViewResult;
+            viewResult!.Model.Should().BeOfType<ListClubByStateViewModel>();
+
+            var model = viewResult.Model as ListClubByStateViewModel;
+
+            model!.Clubs.Should().BeEmpty();
+            model.NoClubWarning.Should().BeTrue();
+            model.State.Should().BeNull();
+        }
+
     }
 }
