@@ -22,3 +22,10 @@ Rungroops is an online platform for runners. This platform will help you to find
   Data Source=DESKTOP-EI2TOGP\\SQLEXPRESS;Initial Catalog=RunGroops;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False
 ```
 4. Register for a [Cloudinary Account](https://cloudinary.com/users/register/free) (%100 free) and add Cloudname, ApiKey, and Api secret to appsettings.json.
+
+Mohamed Ashraf:
+Used:
+  xUnit
+  FluentAssertion
+  Moq
+  Microsoft.EntityFrameworkCore.InMemory
